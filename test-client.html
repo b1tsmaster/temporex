@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelutral Game Frame Sync - Test Client</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .connected {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .disconnected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-connect {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-disconnect {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-action {
+            background-color: #007bff;
+            color: white;
+        }
+        #messages {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #f9f9f9;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .message {
+            margin: 5px 0;
+            padding: 3px;
+        }
+        .sent {
+            color: #0066cc;
+        }
+        .received {
+            color: #006600;
+        }
+        .info {
+            color: #666;
+        }
+        input {
+            padding: 8px;
+            margin: 5px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Kelutral Game Frame Sync - Test Client</h1>
+        
+        <div id="status" class="status disconnected">
+            Disconnected
+        </div>
+        
+        <div>
+            <label>Server URL:</label>
+            <input type="text" id="serverUrl" value="ws://localhost:8080/ws" />
+            <label>Player ID:</label>
+            <input type="text" id="playerId" value="test-player-1" />
+        </div>
+        
+        <div style="margin-top: 10px;">
+            <button class="btn-connect" onclick="connect()">Connect</button>
+            <button class="btn-disconnect" onclick="disconnect()">Disconnect</button>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <h3>Test Actions</h3>
+            <button class="btn-action" onclick="sendMove()">Send Move</button>
+            <button class="btn-action" onclick="sendJump()">Send Jump</button>
+            <button class="btn-action" onclick="sendAttack()">Send Attack</button>
+        </div>
+        
+        <h3>Messages Log</h3>
+        <div id="messages"></div>
+    </div>
+
+    <script>
+        let ws = null;
+        let frameCounter = 0;
+        
+        function addMessage(text, className) {
+            const messagesDiv = document.getElementById('messages');
+            const messageEl = document.createElement('div');
+            messageEl.className = 'message ' + className;
+            messageEl.textContent = new Date().toLocaleTimeString() + ' - ' + text;
+            messagesDiv.appendChild(messageEl);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        function updateStatus(connected) {
+            const statusDiv = document.getElementById('status');
+            if (connected) {
+                statusDiv.className = 'status connected';
+                statusDiv.textContent = 'Connected';
+            } else {
+                statusDiv.className = 'status disconnected';
+                statusDiv.textContent = 'Disconnected';
+            }
+        }
+        
+        function connect() {
+            const serverUrl = document.getElementById('serverUrl').value;
+            const playerId = document.getElementById('playerId').value;
+            
+            const url = serverUrl + '?player_id=' + encodeURIComponent(playerId);
+            
+            try {
+                ws = new WebSocket(url);
+                
+                ws.onopen = function() {
+                    addMessage('Connected to server', 'info');
+                    updateStatus(true);
+                };
+                
+                ws.onmessage = function(event) {
+                    const data = JSON.parse(event.data);
+                    addMessage('Received: ' + JSON.stringify(data), 'received');
+                };
+                
+                ws.onerror = function(error) {
+                    addMessage('Error: ' + error, 'info');
+                };
+                
+                ws.onclose = function() {
+                    addMessage('Disconnected from server', 'info');
+                    updateStatus(false);
+                };
+            } catch (error) {
+                addMessage('Connection error: ' + error, 'info');
+            }
+        }
+        
+        function disconnect() {
+            if (ws) {
+                ws.close();
+                ws = null;
+            }
+        }
+        
+        function sendFrame(actions) {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                addMessage('Not connected!', 'info');
+                return;
+            }
+            
+            const playerId = document.getElementById('playerId').value;
+            const frameData = {
+                player_id: playerId,
+                frame_num: ++frameCounter,
+                actions: actions
+            };
+            
+            ws.send(JSON.stringify(frameData));
+            addMessage('Sent: ' + JSON.stringify(frameData), 'sent');
+        }
+        
+        function sendMove() {
+            sendFrame({
+                action: 'move',
+                x: Math.random() * 100,
+                y: Math.random() * 100,
+                direction: ['up', 'down', 'left', 'right'][Math.floor(Math.random() * 4)]
+            });
+        }
+        
+        function sendJump() {
+            sendFrame({
+                action: 'jump',
+                power: Math.random() * 10
+            });
+        }
+        
+        function sendAttack() {
+            sendFrame({
+                action: 'attack',
+                target: 'enemy_' + Math.floor(Math.random() * 5),
+                damage: Math.floor(Math.random() * 50)
+            });
+        }
+    </script>
+</body>
+</html>
