@@ -1,0 +1,26 @@
+{
+  "editor.formatOnSave": true,
+  "[go]": {
+    "editor.defaultFormatter": "golang.go",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+  "go.toolsManagement.autoUpdate": true,
+  "go.useLanguageServer": true,
+  "gopls": {
+    "ui.semanticTokens": true,
+    "usePlaceholders": true,
+    "analyses": {
+      "fillreturns": true,
+      "nonewvars": true,
+      "shadow": true,
+      "unusedparams": true
+    },
+    "staticcheck": true
+  },
+  "go.testFlags": [
+    "-v"
+  ]
+}

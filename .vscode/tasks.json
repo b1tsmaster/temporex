@@ -1,0 +1,56 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build",
+      "type": "shell",
+      "command": "go",
+      "args": [
+        "build",
+        "./..."
+      ],
+      "group": "build",
+      "problemMatcher": [
+        "$go"
+      ]
+    },
+    {
+      "label": "Run",
+      "type": "shell",
+      "command": "go",
+      "args": [
+        "run",
+        "."
+      ],
+      "group": "none",
+      "problemMatcher": [
+        "$go"
+      ]
+    },
+    {
+      "label": "Test",
+      "type": "shell",
+      "command": "go",
+      "args": [
+        "test",
+        "./..."
+      ],
+      "group": "test",
+      "problemMatcher": [
+        "$go"
+      ]
+    },
+    {
+      "label": "Clean",
+      "type": "shell",
+      "command": "go",
+      "args": [
+        "clean",
+        "-cache",
+        "-testcache",
+        "-modcache"
+      ],
+      "group": "none"
+    }
+  ]
+}
