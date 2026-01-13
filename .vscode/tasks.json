@@ -5,52 +5,44 @@
       "label": "Build",
       "type": "shell",
       "command": "go",
-      "args": [
-        "build",
-        "./..."
-      ],
+      "args": ["build", "./..."],
       "group": "build",
-      "problemMatcher": [
-        "$go"
-      ]
+      "options": {
+        "cwd": "${workspaceFolder}/temporex"
+      },
+      "problemMatcher": ["$go"]
     },
     {
       "label": "Run",
       "type": "shell",
       "command": "go",
-      "args": [
-        "run",
-        "."
-      ],
+      "args": ["run", "."],
       "group": "none",
-      "problemMatcher": [
-        "$go"
-      ]
+      "options": {
+        "cwd": "${workspaceFolder}/temporex"
+      },
+      "problemMatcher": ["$go"]
     },
     {
       "label": "Test",
       "type": "shell",
       "command": "go",
-      "args": [
-        "test",
-        "./..."
-      ],
+      "args": ["test", "./..."],
       "group": "test",
-      "problemMatcher": [
-        "$go"
-      ]
+      "options": {
+        "cwd": "${workspaceFolder}/temporex"
+      },
+      "problemMatcher": ["$go"]
     },
     {
       "label": "Clean",
       "type": "shell",
       "command": "go",
-      "args": [
-        "clean",
-        "-cache",
-        "-testcache",
-        "-modcache"
-      ],
-      "group": "none"
+      "args": ["clean", "-cache", "-testcache", "-modcache"],
+      "group": "none",
+      "options": {
+        "cwd": "${workspaceFolder}/temporex"
+      }
     }
   ]
 }

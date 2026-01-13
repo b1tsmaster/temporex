@@ -8,5 +8,6 @@ func main() {
 		v[i] = i * i
 	}
 	v = append(v, 25)
+	v = append(v, 36)
 	fmt.Printf("%v\n", v)
 }
