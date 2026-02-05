@@ -14,16 +14,17 @@ type PlayerConn struct {
 type GamePlayer struct {
 	playerID string
 	groups   []string
+	conn     *PlayerConn
 }
 
-func NewPlayerConn(conn *websocket.Conn) *PlayerConn {
+func AddPlayerConn(conn *websocket.Conn) *PlayerConn {
 	return &PlayerConn{
 		createdAt: time.Now(),
 		conn:      conn,
 	}
 }
 
-func NewGamePlayer(playerID string) *GamePlayer {
+func AddGamePlayer(playerID string) *GamePlayer {
 	return &GamePlayer{
 		playerID: playerID,
 		groups:   []string{},
